@@ -1,0 +1,23 @@
+{
+  "indexes": [    
+    {
+      "collectionGroup": "teams",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "gameId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "score",
+          "order": "DESCENDING"
+        },
+        {
+          "fieldPath": "teamName",
+          "order": "ASCENDING"
+        }
+      ]
+    }   
+  ],
+  "fieldOverrides": []
+}

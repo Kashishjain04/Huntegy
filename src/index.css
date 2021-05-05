@@ -1,13 +1,44 @@
+@import url("https://fonts.googleapis.com/css2?family=New+Tegomin&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  font-family: "Cinzel", "New Tegomin", "sans";
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+.hint-text {
+  font-family: "New Tegomin", "sans";
+}
+
+.loader {
+  border-top-color: #4f99a2;
+  -webkit-animation: spinner 1.5s linear infinite;
+  animation: spinner 1.5s linear infinite;
+}
+
+@-webkit-keyframes spinner {
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@layer base {
+  .landing-option {
+    @apply flex flex-col items-center justify-evenly bg-white border border-gray-400 rounded-[2rem] p-4 w-56 h-56 sm:w-64 sm:h-64 md:w-80 md:h-80 cursor-pointer transform hover:scale-110 transition duration-500 hover:shadow-2xl;
+  }
 }
