@@ -18,6 +18,7 @@ const Login = () => {
           email: additionalUserInfo.profile.email,
           name: additionalUserInfo.profile.name,
           photoURL: additionalUserInfo.profile.picture,
+          games: [],
         };
         if (additionalUserInfo.isNewUser) {
           db()

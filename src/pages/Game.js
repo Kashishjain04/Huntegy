@@ -2,14 +2,17 @@ import React, { useEffect, useState } from "react";
 import firebase from "../firebase";
 import startSvg from "../assets/start.svg";
 import Loader from "../components/Loader";
+import { useDispatch, useSelector } from "react-redux";
+import { isLoading, setLoading } from "../redux/loadSlice";
 
 const db = firebase.firestore;
 
 const Game = (props) => {
-  const { gameId } = props.match.params,
+  const dispatch = useDispatch(),
+    loading = useSelector(isLoading),
+    { gameId } = props.match.params,
     [dbGame, setDbGame] = useState(null),
-    [dbTeams, setDbTeams] = useState([]),
-    [loading, setLoading] = useState(true);
+    [dbTeams, setDbTeams] = useState([]);
 
   useEffect(() => {
     return () => {
@@ -19,19 +22,20 @@ const Game = (props) => {
   }, []);
 
   useEffect(() => {
-    setLoading(true);
+    dispatch(setLoading(true));
     db()
       .doc(`games/${gameId}`)
       .onSnapshot((snap) => {
         if (snap.exists) setDbGame({ ...snap.data(), id: snap.id });
-        setLoading(false);
+        dispatch(setLoading(false));
       });
+    //eslint-disable-next-line
   }, [gameId]);
 
   useEffect(() => {
     if (dbGame) {
       setDbTeams([]);
-      setLoading(true);
+      dispatch(setLoading(true));
       db()
         .collection("teams")
         .where("gameId", "==", dbGame.id)
@@ -42,9 +46,10 @@ const Game = (props) => {
           snap.docs.forEach((doc) =>
             setDbTeams((prev) => [...prev, { ...doc.data(), teamId: doc.id }])
           );
-          setLoading(false);
+          dispatch(setLoading(false));
         });
     }
+    //eslint-disable-next-line
   }, [dbGame]);
 
   const shuffledHints = (hints) => {

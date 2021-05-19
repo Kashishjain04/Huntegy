@@ -6,17 +6,18 @@ import GameComplete from "../components/Player/GameComplete";
 import Leaderboard from "../components/Player/Leaderboard";
 import Hint from "../components/Player/Hint";
 import Loader from "../components/Loader";
+import { isLoading, setLoading } from "../redux/loadSlice";
 
 const db = firebase.firestore;
 
 const Player = () => {
   const dispatch = useDispatch(),
+    loading = useSelector(isLoading),
     teamId = useSelector(selectTeamId),
     [dbTeam, setDbTeam] = useState(null),
     [hintIndex, setHintIndex] = useState(0),
     [showLead, setShowLead] = useState(false),
-    [ans, setAns] = useState(""),
-    [loading, setLoading] = useState(true);
+    [ans, setAns] = useState("");
 
   useEffect(() => {
     if (teamId) {
@@ -29,15 +30,15 @@ const Player = () => {
             for (; i < snap.data().hints?.length; i++) {
               if (snap.data().hints[i]?.solved === false) {
                 setHintIndex(i);
-                setLoading(false);
+                dispatch(setLoading(false));
                 break;
               }
             }
             if (i === snap.data().hints?.length) {
               setHintIndex(-1);
-              setLoading(false);
+              dispatch(setLoading(false));
             }
-          } else setLoading(false);
+          } else dispatch(setLoading(false));
         });
     }
     return () => {
@@ -45,6 +46,7 @@ const Player = () => {
       setHintIndex(0);
       setShowLead(false);
     };
+    //eslint-disable-next-line
   }, [teamId]);
 
   const exitGame = () => {
@@ -54,9 +56,9 @@ const Player = () => {
 
   const submitHint = (e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(setLoading(true));
     if (ans !== dbTeam?.hints[hintIndex]?.answer) {
-      setLoading(false);
+      dispatch(setLoading(false));
       return alert("Oops! Wrong Ans");
     }
     let newHints = dbTeam?.hints;
@@ -69,11 +71,11 @@ const Player = () => {
       })
       .then(async () => {
         setAns("");
-        setLoading(false);
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         console.log(err);
-        setLoading(false);
+        dispatch(setLoading(false));
       });
   };
 

@@ -9,6 +9,7 @@ import NewGame from "./pages/NewGame";
 import Game from "./pages/Game";
 import PlayerLanding from "./pages/PlayerLanding";
 import NotFound from "./pages/NotFound";
+import { setLoading } from "./redux/loadSlice";
 
 const auth = firebase.auth,
   db = firebase.firestore;
@@ -17,6 +18,7 @@ function App() {
   const dispatch = useDispatch();
 
   useEffect(() => {
+    dispatch(setLoading(true));
     auth().onAuthStateChanged((user) => {
       if (user) {
         db()
@@ -24,12 +26,12 @@ function App() {
           .onSnapshot((snap) => {
             if (snap.exists) {
               dispatch(login(snap.data()));
-              // setLoading(false);
+              dispatch(setLoading(false));
             }
           });
       } else {
         dispatch(logout());
-        // setLoading(false);
+        dispatch(setLoading(false));
       }
     });
   }, [dispatch]);

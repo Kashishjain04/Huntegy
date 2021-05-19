@@ -5,17 +5,18 @@ import Player from "./Player";
 import firebase from "../firebase";
 import { useHistory } from "react-router";
 import Loader from "../components/Loader";
+import { isLoading, setLoading } from "../redux/loadSlice";
 
 const db = firebase.firestore;
 
 const PlayerLanding = (props) => {
   const history = useHistory(),
     dispatch = useDispatch(),
+    loading = useSelector(isLoading),
     teamId = useSelector(selectTeamId),
     [inp, setInp] = useState(""),
     [formShown, setFormShown] = useState(1),
-    [dbTeam, setDbTeam] = useState(null),
-    [loading, setLoading] = useState(true);
+    [dbTeam, setDbTeam] = useState(null);
 
   // Is Team Name Initialized
   const isInitialized = async (id) =>
@@ -43,7 +44,7 @@ const PlayerLanding = (props) => {
             localStorage.setItem("teamId", urlTeamId);
             dispatch(setTeamId(urlTeamId));
           }
-          // setLoading(false);
+          // dispatch(setLoading(false));
         });
     }
     //eslint-disable-next-line
@@ -54,7 +55,7 @@ const PlayerLanding = (props) => {
     const renderForm = async () => {
       const initialized = await isInitialized(teamId);
       (await initialized) ? setFormShown(3) : setFormShown(2);
-      setLoading(false);
+      dispatch(setLoading(false));
     };
 
     // Dispatch teamId from localState
@@ -64,12 +65,12 @@ const PlayerLanding = (props) => {
     // validate teamId
     if (!teamId) {
       setFormShown(1);
-      setLoading(false);
+      dispatch(setLoading(false));
     } else {
       renderForm();
     }
     return () => {
-      setLoading(true);
+      dispatch(setLoading(true));
       setDbTeam(null);
     };
     //eslint-disable-next-line
@@ -77,7 +78,7 @@ const PlayerLanding = (props) => {
 
   const submit1 = (e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(setLoading(true));
     db()
       .doc(`teams/${inp}`)
       .get()
@@ -89,7 +90,7 @@ const PlayerLanding = (props) => {
         localStorage.setItem("teamId", inp);
         dispatch(setTeamId(inp));
         setInp("");
-        setLoading(false);
+        dispatch(setLoading(false));
       });
   };
 
@@ -130,17 +131,17 @@ const PlayerLanding = (props) => {
 
   const submit2 = (e) => {
     e.preventDefault();
-    setLoading(true);
+    dispatch(setLoading(true));
     db()
       .doc(`teams/${teamId}`)
       .update({ teamName: inp ? inp : dbTeam.teamName, initialized: true })
       .then(() => {
         setFormShown(3);
-        setLoading(false);
+        dispatch(setLoading(false));
       })
       .catch((err) => {
         console.log(err);
-        setLoading(false);
+        dispatch(setLoading(false));
       });
   };
 

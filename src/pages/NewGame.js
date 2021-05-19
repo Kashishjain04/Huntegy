@@ -1,24 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useHistory } from "react-router";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../redux/userSlice";
 import firebase from "../firebase";
 import NewForm1 from "../components/Host/NewForm1";
 import NewForm2 from "../components/Host/NewForm2";
 import Loader from "../components/Loader";
+import { isLoading, setLoading } from "../redux/loadSlice";
 
 const db = firebase.firestore;
 
 const NewGame = () => {
   const history = useHistory(),
+    dispatch = useDispatch(),
+    loading = useSelector(isLoading),
     user = useSelector(selectUser),
     [name, setName] = useState(""),
     [teams, setTeams] = useState(""),
     [shuffle, setShuffle] = useState(""),
     [exist, setExist] = useState(false),
     [dbGames, setDbGames] = useState(null),
-    [formShown, setFormShown] = useState(1),
-    [loading, setLoading] = useState(false);
+    [formShown, setFormShown] = useState(1);
 
   useEffect(() => {
     db()
@@ -35,7 +37,7 @@ const NewGame = () => {
   }, []);
 
   const submitGame = (hints) => {
-    setLoading(true);
+    dispatch(setLoading(true));
     const obj = {
       name,
       numberOfTeams: Number(teams),
@@ -58,12 +60,12 @@ const NewGame = () => {
             }),
           })
           .then(() => {
-            setLoading(false);
+            dispatch(setLoading(false));
             history.replace("/host");
           });
       })
       .catch((err) => {
-        setLoading(false);
+        dispatch(setLoading(false));
         console.log(err);
       });
   };
